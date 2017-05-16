@@ -14,6 +14,14 @@ namespace KGG
             }
         }
 
+        public static void DrawText(this Bitmap bitmap, int x, int y, string text, Color color)
+        {
+            using (var gfx = Graphics.FromImage(bitmap))
+            {
+                gfx.DrawString(text, new Font(FontFamily.GenericMonospace, 8), new SolidBrush(color), x, y);
+            }
+        }
+
         public static void DrawLine(this Bitmap image, int x1, int y1, int x2, int y2, Color color)
         {
             var steep = Math.Abs(y2 - y1) > Math.Abs(x2 - x1); // Проверяем рост отрезка по оси икс и по оси игрек
