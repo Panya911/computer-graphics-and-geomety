@@ -32,7 +32,7 @@ namespace DrawAlogorithms
             PointD previousPoint = null;
             graphics.DrawLine(0, (graphics.Height / 2) - 1, graphics.Width - 1, (graphics.Width / 2) - 1, Color.Red);
             graphics.DrawLine((graphics.Width / 2) - 1, 0, (graphics.Width / 2) - 1, graphics.Height - 1, Color.Red);
-            for (int i = (int)from + 1; i < to; i++)
+            for (var i = (int)from + 1; i < to; i++)
             {
                 var pixelX = ScaleOnIntegerSegment(i - xMin, graphics.Width, xMin, xMax);
                 graphics.DrawText(pixelX, (graphics.Height / 2) + 6, i.ToString(), Color.Red);
@@ -64,11 +64,8 @@ namespace DrawAlogorithms
                     continue;
                 }
                 var pixelY = ScaleOnIntegerSegment(ymax - point.Y, graphics.Height, ymin, ymax);
-
                 var previousPixelY = ScaleOnIntegerSegment(ymax - previousPoint.Y, graphics.Height, ymin, ymax);
-
                 graphics.DrawLine(pixelX - 1, previousPixelY, pixelX, pixelY, color);
-
                 previousPoint = point;
             }
         }
@@ -130,6 +127,55 @@ namespace DrawAlogorithms
         private static double ScaleOnSegment(double point, double segmentLength, double from, double to)
         {
             return point * segmentLength / (to - from);
+        }
+
+        public static void DrawElipse(this Bitmap image, int x, int y, int width, int height, Color color)
+        {
+            var a = width / 2;
+            var b = height / 2;
+            var _x = 0; // Компонента x
+            var _y = b; // Компонента y
+            var a_sqr = a * a; // a^2, a - большая полуось
+            var b_sqr = b * b; // b^2, b - малая полуось
+            var delta = 4 * b_sqr * ((_x + 1) * (_x + 1)) + a_sqr * ((2 * _y - 1) * (2 * _y - 1)) - 4 * a_sqr * b_sqr; // Функция координат точки (x+1, y-1/2)
+            while (a_sqr * (2 * _y - 1) > 2 * b_sqr * (_x + 1)) // Первая часть дуги
+            {
+                DrawSimmetricPixels(x, y, _x, _y);
+                if (delta < 0) // Переход по горизонтали
+                {
+                    _x++;
+                    delta += 4 * b_sqr * (2 * _x + 3);
+                }
+                else // Переход по диагонали
+                {
+                    _x++;
+                    delta = delta - 8 * a_sqr * (_y - 1) + 4 * b_sqr * (2 * _x + 3);
+                    _y--;
+                }
+            }
+            delta = b_sqr * ((2 * _x + 1) * (2 * _x + 1)) + 4 * a_sqr * ((_y + 1) * (_y + 1)) - 4 * a_sqr * b_sqr; // Функция координат точки (x+1/2, y-1)
+            while (_y + 1 != 0) // Вторая часть дуги, если не выполняется условие первого цикла, значит выполняется a^2(2y - 1) <= 2b^2(x + 1)
+            {
+                DrawSimmetricPixels(x, y, _x, _y);
+                if (delta < 0) // Переход по вертикали
+                {
+                    _y--;
+                    delta += 4 * a_sqr * (2 * _y + 3);
+                }
+                else // Переход по диагонали
+                {
+                    _y--;
+                    delta = delta - 8 * b_sqr * (_x + 1) + 4 * a_sqr * (2 * _y + 3);
+                    _x++;
+                }
+            }
+            void DrawSimmetricPixels(int centerX, int centerY, int x1, int y1)
+            {
+                image.SetPixel(centerX + x1, centerY + y1, color);
+                image.SetPixel(centerX - x1, centerY + y1, color);
+                image.SetPixel(centerX + x1, centerY - y1, color);
+                image.SetPixel(centerX - x1, centerY - y1, color);
+            }
         }
     }
 }

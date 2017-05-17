@@ -21,5 +21,11 @@ namespace KGG.forms
             var secondTaskForm = new SecondTask();
             secondTaskForm.Show();
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            var thirdTaskForm=new ThirdTask();
+            thirdTaskForm.Show();
+        }
     }
 }

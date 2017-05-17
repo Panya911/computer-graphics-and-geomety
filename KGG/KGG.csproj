@@ -64,6 +64,12 @@
     <Compile Include="forms\FirstTask.Designer.cs">
       <DependentUpon>FirstTask.cs</DependentUpon>
     </Compile>
+    <Compile Include="forms\ThirdTask.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="forms\ThirdTask.Designer.cs">
+      <DependentUpon>ThirdTask.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="forms\Main.resx">
@@ -74,6 +80,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="forms\FirstTask.resx">
       <DependentUpon>FirstTask.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="forms\ThirdTask.resx">
+      <DependentUpon>ThirdTask.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
