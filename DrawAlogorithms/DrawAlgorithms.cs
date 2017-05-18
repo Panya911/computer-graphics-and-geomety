@@ -6,16 +6,16 @@ namespace DrawAlogorithms
 {
     public static class DrawAlgorithms
     {
-        public static void DrawGraphic(this Bitmap graphics, Func<double, double> f, double from, double to, Color color)
+        public static void DrawGraphic(this Bitmap image, Func<double, double> f, double from, double to, Color color)
         {
             var Fa = f(from);
             var ymin = Fa;
             var ymax = Fa;
             var xMin = 0d;
             var xMax = 0d;
-            for (var xx = 0; xx < graphics.Width; ++xx)
+            for (var xx = 0; xx < image.Width; ++xx)
             {
-                var x = from + xx * (to - from) / graphics.Width;
+                var x = from + xx * (to - from) / image.Width;
                 var y = f(x);
 
                 if (double.IsInfinity(y) || double.IsNaN(y))
@@ -30,28 +30,28 @@ namespace DrawAlogorithms
             }
 
             PointD previousPoint = null;
-            graphics.DrawLine(0, (graphics.Height / 2) - 1, graphics.Width - 1, (graphics.Width / 2) - 1, Color.Red);
-            graphics.DrawLine((graphics.Width / 2) - 1, 0, (graphics.Width / 2) - 1, graphics.Height - 1, Color.Red);
+            image.DrawLine(0, (image.Height / 2) - 1, image.Width - 1, (image.Width / 2) - 1, Color.Red);
+            image.DrawLine((image.Width / 2) - 1, 0, (image.Width / 2) - 1, image.Height - 1, Color.Red);
             for (var i = (int)from + 1; i < to; i++)
             {
-                var pixelX = ScaleOnIntegerSegment(i - xMin, graphics.Width, xMin, xMax);
-                graphics.DrawText(pixelX, (graphics.Height / 2) + 6, i.ToString(), Color.Red);
+                var pixelX = ScaleOnIntegerSegment(i - xMin, image.Width, xMin, xMax);
+                image.DrawText(pixelX, (image.Height / 2) + 6, i.ToString(), Color.Red);
 
-                graphics.DrawLine(pixelX, (graphics.Height / 2) - 3, pixelX, (graphics.Height / 2) + 1, Color.Red);
+                image.DrawLine(pixelX, (image.Height / 2) - 3, pixelX, (image.Height / 2) + 1, Color.Red);
             }
 
             var yStep = (ymax - ymin) / 30;
             for (var y = ymin; y < ymax; y += yStep)
             {
-                var pixelY = ScaleOnIntegerSegment(ymax - y, graphics.Height, ymin, ymax);
-                graphics.DrawText((graphics.Width / 2) + 6, pixelY, y.ToString("0.00"), Color.Red);
+                var pixelY = ScaleOnIntegerSegment(ymax - y, image.Height, ymin, ymax);
+                image.DrawText((image.Width / 2) + 6, pixelY, y.ToString("0.00"), Color.Red);
 
-                graphics.DrawLine((graphics.Width / 2) - 3, pixelY, (graphics.Width / 2) + 1, pixelY, Color.Red);
+                image.DrawLine((image.Width / 2) - 3, pixelY, (image.Width / 2) + 1, pixelY, Color.Red);
             }
 
-            for (var pixelX = 0; pixelX < graphics.Width; pixelX++)
+            for (var pixelX = 0; pixelX < image.Width; pixelX++)
             {
-                var x = from + pixelX * (to - from) / graphics.Width;
+                var x = from + pixelX * (to - from) / image.Width;
                 var point = new PointD(x, f(x));
                 if (double.IsInfinity(point.Y) || double.IsNaN(point.Y))
                 {
@@ -63,9 +63,9 @@ namespace DrawAlogorithms
                     previousPoint = point;
                     continue;
                 }
-                var pixelY = ScaleOnIntegerSegment(ymax - point.Y, graphics.Height, ymin, ymax);
-                var previousPixelY = ScaleOnIntegerSegment(ymax - previousPoint.Y, graphics.Height, ymin, ymax);
-                graphics.DrawLine(pixelX - 1, previousPixelY, pixelX, pixelY, color);
+                var pixelY = ScaleOnIntegerSegment(ymax - point.Y, image.Height, ymin, ymax);
+                var previousPixelY = ScaleOnIntegerSegment(ymax - previousPoint.Y, image.Height, ymin, ymax);
+                image.DrawLine(pixelX - 1, previousPixelY, pixelX, pixelY, color);
                 previousPoint = point;
             }
         }
@@ -87,6 +87,27 @@ namespace DrawAlogorithms
                 if (point.X > xMax) { xMax = point.X; }
                 if (point.Y < yMin) { yMin = point.Y; }
                 if (point.Y > yMax) { yMax = point.Y; }
+            }
+
+            image.DrawLine(0, (image.Height / 2) - 1, image.Width - 1, (image.Width / 2) - 1, Color.Red);
+            image.DrawLine((image.Width / 2) - 1, 0, (image.Width / 2) - 1, image.Height - 1, Color.Red);
+
+            var xStep = (xMax - xMin) / 30;
+            for (var x = xMin; x < xMax; x += xStep)
+            {
+                var pixelX = ScaleOnIntegerSegment(x - xMin, image.Width, xMin, xMax);
+                image.DrawText(pixelX, (image.Height / 2) + 6, x.ToString(), Color.Red);
+
+                image.DrawLine(pixelX, (image.Height / 2) - 3, pixelX, (image.Height / 2) + 1, Color.Red);
+            }
+
+            var yStep = (yMax - yMin) / 30;
+            for (var y = yMin; y < yMax; y += yStep)
+            {
+                var pixelY = ScaleOnIntegerSegment(yMax - y, image.Height, yMin, yMax);
+                image.DrawText((image.Width / 2) + 6, pixelY, y.ToString("0.00"), Color.Red);
+
+                image.DrawLine((image.Width / 2) - 3, pixelY, (image.Width / 2) + 1, pixelY, Color.Red);
             }
 
             PointD previousPoint = null;
@@ -113,6 +134,77 @@ namespace DrawAlogorithms
                 previousPoint = point;
             }
         }
+
+        public static void DrawGraphicInPolar1(this Bitmap image, Func<double, double> f, double rFrom, double rTo, Color color)
+        {
+            const double step = 0.1d;
+            var xMax = double.MinValue;
+            var xMin = double.MaxValue;
+            var yMax = double.MinValue;
+            var yMin = double.MaxValue;
+            for (var r = rFrom; r < rTo; r += step)
+            {
+                var point = PointD.FromPolar(r, f(r));
+                if (double.IsInfinity(point.Y) || double.IsNaN(point.Y))
+                {
+                    continue;
+                }
+                if (point.X < xMin) { xMin = point.X; }
+                if (point.X > xMax) { xMax = point.X; }
+                if (point.Y < yMin) { yMin = point.Y; }
+                if (point.Y > yMax) { yMax = point.Y; }
+            }
+
+            image.DrawLine(0, (image.Height / 2) - 1, image.Width - 1, (image.Width / 2) - 1, Color.Red);
+            image.DrawLine((image.Width / 2) - 1, 0, (image.Width / 2) - 1, image.Height - 1, Color.Red);
+
+            var xStep = (xMax - xMin) / 5;
+            for (var x = xMin; x < xMax; x += xStep)
+            {
+                var pixelX = ScaleOnIntegerSegment(x - xMin, image.Width, xMin, xMax);
+                image.DrawText(pixelX, (image.Height / 2) + 6, x.ToString("0.00"), Color.Red);
+
+                image.DrawLine(pixelX, (image.Height / 2) - 3, pixelX, (image.Height / 2) + 1, Color.Red);
+            }
+
+            var yStep = (yMax - yMin) / 30;
+            for (var y = yMin; y < yMax; y += yStep)
+            {
+                var pixelY = ScaleOnIntegerSegment(yMax - y, image.Height, yMin, yMax);
+                image.DrawText((image.Width / 2) + 6, pixelY, y.ToString("0.00"), Color.Red);
+
+                image.DrawLine((image.Width / 2) - 3, pixelY, (image.Width / 2) + 1, pixelY, Color.Red);
+            }
+
+            PointD previousPoint = null;
+            for (var r = rFrom; r < rTo; r += step)
+            {
+                var point = PointD.FromPolar(r, f(r));
+                if (double.IsInfinity(point.Y) || double.IsNaN(point.Y))
+                {
+                    previousPoint = null;
+                    continue;
+                }
+                if (previousPoint == null)
+                {
+                    previousPoint = point;
+                    continue;
+                }
+                if (Math.Abs(point.X - previousPoint.X) < 0.0000001 && Math.Abs(point.Y - previousPoint.Y) < 0.0000001)
+                {
+                    continue;
+                }
+                var previousX = ScaleOnIntegerSegment(previousPoint.X - xMin, image.Width, xMin, xMax);
+                var previousY = ScaleOnIntegerSegment(yMax - previousPoint.Y, image.Height, yMin, yMax);
+
+                var pixelX = ScaleOnIntegerSegment(point.X - xMin, image.Width, xMin, xMax);
+                var pixelY = ScaleOnIntegerSegment(yMax - point.Y, image.Height, yMin, yMax);
+
+                image.DrawLine(previousX, previousY, pixelX, pixelY, color);
+                previousPoint = point;
+            }
+        }
+
 
         private static int ScaleOnIntegerSegment(double point, int segmentLength, double from, double to)
         {
