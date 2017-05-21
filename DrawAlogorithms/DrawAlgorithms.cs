@@ -221,7 +221,7 @@ namespace DrawAlogorithms
             return point * segmentLength / (to - from);
         }
 
-        public static void DrawElipse(this Bitmap image, int x, int y, int width, int height, Color color)
+        public static void DrawElipse(this Bitmap image, int x, int y, int width, int height, int cellSize, Color color)
         {
             var a = width / 2;
             var b = height / 2;
@@ -263,10 +263,28 @@ namespace DrawAlogorithms
             }
             void DrawSimmetricPixels(int centerX, int centerY, int x1, int y1)
             {
-                image.SetPixel(centerX + x1, centerY + y1, color);
-                image.SetPixel(centerX - x1, centerY + y1, color);
-                image.SetPixel(centerX + x1, centerY - y1, color);
-                image.SetPixel(centerX - x1, centerY - y1, color);
+                FillPixels(image, centerX + x1, centerY + y1, cellSize, color);
+                FillPixels(image, centerX - x1, centerY + y1, cellSize, color);
+                FillPixels(image, centerX + x1, centerY - y1, cellSize, color);
+                FillPixels(image, centerX - x1, centerY - y1, cellSize, color);
+                //image.SetPixel(centerX + x1, centerY + y1, color);
+                //image.SetPixel(centerX - x1, centerY + y1, color);
+                //image.SetPixel(centerX + x1, centerY - y1, color);
+                //image.SetPixel(centerX - x1, centerY - y1, color);
+            }
+
+        }
+
+        private static void FillPixels(Bitmap image, int centerX, int centerY, int cellSize, Color color)
+        {
+            var half = cellSize / 2;
+            for (var i = centerX * cellSize; i < (centerX+1) * cellSize; i++)
+            {
+                for (var j = centerY * cellSize; j < (centerY + 1) * cellSize; j++)
+                {
+                    if (i < image.Width && i >= 0 && j < image.Height && j >= 0)
+                        image.SetPixel(i, j, color);
+                }
             }
         }
     }

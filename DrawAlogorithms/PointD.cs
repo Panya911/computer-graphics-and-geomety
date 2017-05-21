@@ -2,7 +2,7 @@
 
 namespace DrawAlogorithms
 {
-    internal class PointD
+    public class PointD
     {
         public PointD(double x, double y)
         {
