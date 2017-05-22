@@ -7,11 +7,11 @@ namespace DrawAlogorithms._3D
 {
     public class Projector
     {
-        public Point3D Project(Point3D point, PointMovingSpecification pointMovingSpecification)
+        public Point3D Project(Point3D point, TransformSpecification transformSpecification)
         {
             var pointMatrix = ToMatrix(point);
             //var resultPoint = pointMatrix * toCamera * projectMatrix;
-            var resultPoint = pointMatrix * pointMovingSpecification.Matrix;
+            var resultPoint = pointMatrix * transformSpecification.Matrix;
             var planePoint = new Point3D(resultPoint[0, 0] / resultPoint[0, 3], resultPoint[0, 1] / resultPoint[0, 3],
                 resultPoint[0, 2] / resultPoint[0, 3]);
             return planePoint;
@@ -26,16 +26,16 @@ namespace DrawAlogorithms._3D
         }
     }
 
-    public class PointMovingSpecification
+    public class TransformSpecification
     {
-        public PointMovingSpecification()
+        public TransformSpecification()
         {
             Matrix = new DenseMatrix(DenseColumnMajorMatrixStorage<double>.OfDiagonalInit(4, 4, x => 1));
         }
 
         internal Matrix<double> Matrix { get; private set; }
 
-        public PointMovingSpecification Move(double x, double y, double z)
+        public TransformSpecification Move(double x, double y, double z)
         {
             Matrix *= new DenseMatrix(DenseColumnMajorMatrixStorage<double>.OfRowArrays(new[]
             {
@@ -47,7 +47,7 @@ namespace DrawAlogorithms._3D
             return this;
         }
 
-        public PointMovingSpecification Rotate(RotateVector vector, double angle)
+        public TransformSpecification Rotate(RotateVector vector, double angle)
         {
             Matrix<double> rotateMatrix;
             switch (vector)
@@ -86,7 +86,7 @@ namespace DrawAlogorithms._3D
             return this;
         }
 
-        public PointMovingSpecification Project(double fowY, double aspect, double n, double f)
+        public TransformSpecification Project(double fowY, double aspect, double n, double f)
         {
             var h = 1 / Math.Tan(fowY / 2);
             var w = aspect * h;
@@ -102,7 +102,7 @@ namespace DrawAlogorithms._3D
             return this;
         }
 
-        public PointMovingSpecification Inverse()
+        public TransformSpecification Inverse()
         {
             Matrix = Matrix.Inverse();
             return this;

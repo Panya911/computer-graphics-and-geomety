@@ -63,24 +63,16 @@ namespace KGG.forms
             Invalidate();
         }
 
-        private IEnumerable<Point3D> GetLines(Func<double, double, double> f, double zFrom, double zTo, double stepZ,
-            double fromX, double toX, double stepX)
-        {
-            for (var z = zFrom; z < zTo; z += stepZ)
-                for (var x = fromX; x < toX; x += stepX)
-                    yield return new Point3D(x, f(x, z), z);
-        }
-
         private Image DrawFigure(Func<double, double, double> f, double fromZ, double toZ, double stepZ, double fromX,
             double toX, double stepX)
         {
-            var spec = new PointMovingSpecification()
+            var spec = new TransformSpecification()
                 .Rotate(RotateVector.Y, yAngle)
                 .Rotate(RotateVector.X, xAngle)
                 .Move(figureLocation.X, figureLocation.Y, figureLocation.Z)
                 .Project(Math.PI / 2, 16 / 8, 1, 100);
 
-            var normSpec = new PointMovingSpecification()
+            var normSpec = new TransformSpecification()
                 .Rotate(RotateVector.Y, yAngle)
                 .Rotate(RotateVector.X, xAngle);
 
@@ -102,20 +94,19 @@ namespace KGG.forms
                 for (var xi = fromX; xi < toX; xi += stepX)
                 {
                     var p1 = new Point3D(xi, f(xi, plane), plane);
+                    if (double.IsInfinity(p1.Y) || double.IsNaN(p1.Y))
+                    {
+                        p1 = new Point3D(xi, 0, plane);
+                    }
                     var leftPointX = projector.Project(p1, spec);
                     var scaleLeftPoint = new Point(
                         (int)(image.Width * (1 + leftPointX.X) / 2),
                         (int)(image.Height * (1 - leftPointX.Y) / 2));
-                    if (double.IsInfinity(p1.Y) || double.IsNaN(p1.Y))
-                    {
-                        previous = null;
-                        continue;
-                    }
+
                     var p2 = new Point3D(xi + stepX, f(xi + stepX, plane), plane);
                     if (double.IsInfinity(p2.Y) || double.IsNaN(p2.Y))
                     {
-                        previous = null;
-                        continue;
+                        p2 = new Point3D(xi + stepX, 0, plane);
                     }
                     var rightPointX = projector.Project(p2, spec);
                     var scaleRightPoint = new Point(
@@ -161,7 +152,7 @@ namespace KGG.forms
                             wasDrawing = true;
                             previous = point;
                         }
-                        if(!wasDrawing)
+                        if (!wasDrawing)
                         {
                             previous = null;
                         }
