@@ -53,6 +53,7 @@
     <Compile Include="3D\Projector.cs" />
     <Compile Include="DrawAlgorithms.cs" />
     <Compile Include="GraphicsHelper.cs" />
+    <Compile Include="p.cs" />
     <Compile Include="PointD.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

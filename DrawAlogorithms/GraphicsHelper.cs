@@ -14,6 +14,14 @@ namespace KGG
             }
         }
 
+        public static void FillPoligon(this Bitmap bitmap, Point[] points, Color color)
+        {
+            using (var gfx = Graphics.FromImage(bitmap))
+            using (var brush = new SolidBrush(color))
+            {
+                gfx.FillPolygon(brush, points);
+            }
+        }
         public static void DrawText(this Bitmap bitmap, int x, int y, string text, Color color)
         {
             using (var gfx = Graphics.FromImage(bitmap))

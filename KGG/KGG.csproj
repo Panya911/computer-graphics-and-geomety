@@ -52,6 +52,12 @@
     <Compile Include="forms\FiveTask.Designer.cs">
       <DependentUpon>FiveTask.cs</DependentUpon>
     </Compile>
+    <Compile Include="forms\FourthTask.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="forms\FourthTask.Designer.cs">
+      <DependentUpon>FourthTask.cs</DependentUpon>
+    </Compile>
     <Compile Include="forms\Main.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -84,6 +90,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="forms\FourthTask.resx">
+      <DependentUpon>FourthTask.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="forms\Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
     </EmbeddedResource>

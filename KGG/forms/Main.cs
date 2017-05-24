@@ -39,5 +39,11 @@ namespace KGG.forms
             var sixthTaskForm=new SixthTask();
             sixthTaskForm.Show();
         }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            var fourthTask=new FourthTask();
+            fourthTask.Show();
+        }
     }
 }
